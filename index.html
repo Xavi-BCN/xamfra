@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundació NouXamfrà</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@latest/dist/sweetalert2.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-circle {
+            background-color: #4CAF50;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-f {
+            color: #fff;
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            margin-left: 15px;
+        }
+
+        .text-fundacio {
+            display: block;
+            color: #3e7e39;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .text-nouxamfra {
+            display: block;
+            color: #4CAF50;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            border: 1px solid #eeeeee;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 30px; /* Reducir la distancia entre la cabecera y el contenedor */
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #submit {
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #submit:hover {
+            background-color: #45a049;
+        }
+
+        #loading-message {
+            display: none;
+            color: #007bff;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 0.5rem 1rem;
+            }
+            header h1 {
+                font-size: 1.2rem;
+            }
+            .container {
+                padding: 10px;
+                margin-top: 60px;
+            }
+            input, select, textarea {
+                padding: 10px;
+                font-size: 14px;
+            }
+            #submit {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <div class="logo-circle">
+                <span class="logo-f">f</span>
+            </div>
+            <div class="logo-text">
+                <span class="text-fundacio">Fundació</span>
+                <span class="text-nouxamfra">NouXamfrà</span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <form method="post" action="" name="incidencias-form">
+            <input type="text" name="contacto" placeholder="¿Quién solicita el servicio?" autocomplete="off">
+            <input type="text" name="telefono" placeholder="Indica un teléfono de contacto" pattern="\d{9}" title="Debe tener 9 dígitos" required maxlength="9" inputmode="numeric" autocomplete="off">
+            <textarea name="problema" placeholder="Descripción del problema o petición" required rows="3"></textarea>
+            
+            <div>
+                <select id="mod" name="equipacion" required>
+                    <option value="" disabled selected>Seleccionar que está afectado por el problema</option>
+                    <option value="Red">Red</option>
+                    <option value="Portátil">Portátil</option>
+                    <option value="PC">PC</option>
+                    <option value="Impresora">Impresora</option>
+                    <option value="Monitor">Monitor</option>
+                    <option value="Pizarra">Pizarra</option>
+                    <option value="Webcam">Webcam</option>
+                    <option value="Accesorios">Accesorios</option>
+                </select>
+            </div>
+            <div>
+                <label for="inicio_problema">Indicar desde cuándo existe el problema o petición:</label>
+                <input type="date" name="fecha_problema" required>
+                
+                <select id="mod" name="tipo_urgencia" required>
+                    <option value="" disabled selected>Seleccionar tipo de urgencia</option>
+                    <option value="crítico">Crítico</option>
+                    <option value="urgente">Urgente</option>
+                    <option value="visita_tecnica">Cuando venga el técnico</option>
+                </select>
+            </div>
+            
+            <input type="submit" value="Enviar" id="submit">
+            <div id="loading-message">Un momento, enviando información...</div>
+        </form>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzvtfjvJdynO_QG0wPQmwVHxGAgtZtxh9A3RyZN87mMi9gHYaxxwoekZs-C6dHZHiu3/exec';
+        const form = document.forms['incidencias-form'];
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            document.getElementById('loading-message').style.display = 'block';
+            fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+                .then(response => {
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: 'Los datos han sido enviados correctamente.',
+                        icon: 'success',
+                        confirmButtonColor: '#4CAF50',
+                        customClass: {
+                            popup: 'swal2-popup swal2-center',
+                        },
+                    });
+                    form.reset();
+                    document.getElementById('loading-message').style.display = 'none';
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al enviar los datos.',
+                        icon: 'error',
+                        confirmButtonColor: '#4CAF50',
+                        customClass: {
+                            popup: 'swal2-popup swal2-center',
+                        },
+                    });
+                    document.getElementById('loading-message').style.display = 'none';
+                });
+        });
+    </script>
+</body>
+</html>
