@@ -204,34 +204,19 @@
 
         form.addEventListener('submit', e => {
             e.preventDefault();
-            document.getElementById('loading-message').style.display = 'block';
+            document.getElementById('loading-message').style.display = 'block'; // Mostrar mensaje de espera
             fetch(scriptURL, { method: 'POST', body: new FormData(form) })
                 .then(response => {
-                    Swal.fire({
-                        title: 'Éxito',
-                        text: 'Los datos han sido enviados correctamente.',
-                        icon: 'success',
-                        confirmButtonColor: '#4CAF50',
-                        customClass: {
-                            popup: 'swal2-popup swal2-center',
-                        },
-                    });
+                    alert("Les dades han estat enviades correctament.");
                     form.reset();
-                    document.getElementById('loading-message').style.display = 'none';
+                    document.getElementById('loading-message').style.display = 'none'; // Ocultar mensaje de espera
                 })
                 .catch(error => {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Hubo un problema al enviar los datos.',
-                        icon: 'error',
-                        confirmButtonColor: '#4CAF50',
-                        customClass: {
-                            popup: 'swal2-popup swal2-center',
-                        },
-                    });
-                    document.getElementById('loading-message').style.display = 'none';
+                    console.error('Error!', error.message);
+                    document.getElementById('loading-message').style.display = 'none'; // Ocultar mensaje de espera
                 });
         });
+
     </script>
 </body>
 </html>
