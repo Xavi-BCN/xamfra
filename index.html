@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fundació NouXamfrà</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@latest/dist/sweetalert2.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -19,7 +18,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #94cb893e;
             flex-direction: column;
         }
 
@@ -81,18 +80,18 @@
             width: 100%;
             max-width: 600px;
             padding: 20px;
-            border: 1px solid #eeeeee;
+            border: 1px solid #f1eaea;
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 30px; /* Reducir la distancia entre la cabecera y el contenedor */
+            margin-top: 80px; /* Reducir la distancia entre la cabecera y el contenedor */
         }
 
         input, select, textarea {
             width: 100%;
             padding: 12px;
             margin-bottom: 10px;
-            border: 1px solid #dddddd;
+            border: 1px solid #9ee8c8;
             border-radius: 5px;
             font-size: 16px;
             transition: all 0.3s ease;
@@ -147,6 +146,36 @@
                 font-size: 14px;
             }
         }
+        
+        /* Estilo para la ventana emergente */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background-color: white;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+        .modal p {
+            margin: 20px 0;
+        }
+        .modal button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -164,9 +193,15 @@
     
     <div class="container">
         <form method="post" action="" name="incidencias-form">
-            <input type="text" name="contacto" placeholder="¿Quién solicita el servicio?" autocomplete="off">
-            <input type="text" name="telefono" placeholder="Indica un teléfono de contacto" pattern="\d{9}" title="Debe tener 9 dígitos" required maxlength="9" inputmode="numeric" autocomplete="off">
-            <textarea name="problema" placeholder="Descripción del problema o petición" required rows="3"></textarea>
+            <div style="display: flex; justify-content: space-between;">
+                <input type="text" id="fecha" name="fecha" readonly>
+                <input type="text" id="hora" name="hora" readonly>
+            </div>
+
+            <input type="text" name="contacto" placeholder="¿Quién solicita el servicio?" autocomplete="off" required>
+            <input type="email" name="email" placeholder="Indica un correo electrónico" autocomplete="off" required>
+            <input type="text" name="telefono" placeholder="Indica un teléfono de contacto" pattern="[0-9]*" title="Debe tener 9 dígitos" required maxlength="9" inputmode="numeric" autocomplete="off">
+            <textarea name="problema" style="resize: none;" placeholder="Descripción del problema o petición" required rows="3"></textarea>
             
             <div>
                 <select id="mod" name="equipacion" required>
@@ -182,8 +217,7 @@
                 </select>
             </div>
             <div>
-                <label for="inicio_problema">Indicar desde cuándo existe el problema o petición:</label>
-                <input type="date" name="fecha_problema" required>
+                
                 
                 <select id="mod" name="tipo_urgencia" required>
                     <option value="" disabled selected>Seleccionar tipo de urgencia</option>
@@ -198,18 +232,42 @@
         </form>
     </div>
 
+    <!-- Ventana emergente -->
+    <div id="modal" class="modal">
+        <p>Los datos han sido enviados correctamente.</p>
+        <button onclick="closeModal()">Cerrar</button>
+    </div>
+
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzvtfjvJdynO_QG0wPQmwVHxGAgtZtxh9A3RyZN87mMi9gHYaxxwoekZs-C6dHZHiu3/exec';
         const form = document.forms['incidencias-form'];
+        
+        // Mostrar fecha y hora actuales
+        // Función para actualizar la fecha y hora
+        function updateDateTime() {
+            const fecha = new Date();
+            const dia = String(fecha.getDate()).padStart(2, '0');
+            const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+            const año = fecha.getFullYear();
+            const hora = String(fecha.getHours()).padStart(2, '0');
+            const minutos = String(fecha.getMinutes()).padStart(2, '0');
+
+            document.getElementById('fecha').value = `${dia}/${mes}/${año}`;
+            document.getElementById('hora').value = `${hora}:${minutos}`;
+        }
+        
+         // Actualizar fecha y hora al cargar la página y cada minuto
+         updateDateTime();
+         setInterval(updateDateTime, 15000);
 
         form.addEventListener('submit', e => {
             e.preventDefault();
             document.getElementById('loading-message').style.display = 'block'; // Mostrar mensaje de espera
             fetch(scriptURL, { method: 'POST', body: new FormData(form) })
                 .then(response => {
-                    alert("Les dades han estat enviades correctament.");
-                    form.reset();
                     document.getElementById('loading-message').style.display = 'none'; // Ocultar mensaje de espera
+                    showModal(); // Mostrar modal de éxito
+                    form.reset();
                 })
                 .catch(error => {
                     console.error('Error!', error.message);
@@ -217,6 +275,25 @@
                 });
         });
 
+        function showModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+
+        // Validación del correo electrónico
+        document.querySelector('input[name="email"]').addEventListener('input', function () {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(this.value)) {
+                this.setCustomValidity('Por favor, introduce un correo electrónico válido.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
     </script>
 </body>
 </html>
